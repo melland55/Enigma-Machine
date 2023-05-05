@@ -69,13 +69,22 @@ char encryptLetter(char letter, vector<vector<char>> rotors)
     return letter;
 }
 
+
+
 int main()
 {
     // Create three rotors with different sets of characters
     vector<vector<char>> rotors = {
         {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'},
         {'E', 'K', 'M', 'F', 'L', 'G', 'D', 'Q', 'V', 'Z', 'N', 'T', 'O', 'W', 'Y', 'H', 'X', 'U', 'S', 'P', 'A', 'I', 'B', 'R', 'C', 'J'},
-        {'B', 'D', 'F', 'H', 'J', 'L', 'C', 'P', 'R', 'T', 'X', 'V', 'Z', 'N', 'Y', 'E', 'I', 'W', 'G', 'A', 'K', 'M', 'U', 'S', 'Q', 'O'}
+        {'B', 'D', 'F', 'H', 'J', 'L', 'C', 'P', 'R', 'T', 'X', 'V', 'Z', 'N', 'Y', 'E', 'I', 'W', 'G', 'A', 'K', 'M', 'U', 'S', 'Q', 'O'},
+        
+    };
+
+    vector<vector<char>> reflectors = {
+        {'E', 'J', 'M', 'Z', 'A', 'L', 'Y', 'X', 'V', 'B', 'W', 'F', 'C', 'R', 'Q', 'U', 'O', 'N', 'T', 'S', 'P', 'I', 'K', 'H', 'G', 'D'},
+        {'Y', 'R', 'U', 'H', 'Q', 'S', 'L', 'D', 'P', 'X', 'N', 'G', 'O', 'K', 'M', 'I', 'E', 'B', 'F', 'Z', 'C', 'W', 'V', 'J', 'A', 'T'},
+        {'F', 'V', 'P', 'J', 'I', 'A', 'O', 'Y', 'E', 'D', 'R', 'Z', 'X', 'W', 'G', 'C', 'T', 'K', 'U', 'Q', 'S', 'B', 'N', 'M', 'H', 'L'}
     };
 
     // Set the initial position of the rotors
@@ -88,7 +97,7 @@ int main()
     Rotor* r = new Rotor(rotors[1], 0, 2);
     Rotor* r2 = new Rotor(rotors[1], 0, 2, r);
     Rotor* r3 = new Rotor(rotors[1], 0, 2, r2);\
-    cout << r->encode(r2->encode(r3->encode('A')));
+    cout << r->encode(r2->encode(r3->encode('T')));
 
     // Encrypt each letter in the message
     // for (int i = 0; i < message.length(); i++) {
