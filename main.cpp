@@ -26,7 +26,7 @@ public:
         rotors[1]->setPrev(rotors[0]);
     }
 
-    char encode(char letter){
+    char encodeLetter(char letter){
         rotors[0]->rotate();
         return rotors[0]->encode(letter);
     }
@@ -34,7 +34,7 @@ public:
     std::string encodeMessage(std::string message){
         std::string encodedMessage = "";
         for(int i = 0; i < message.length(); i++){
-            encodedMessage += this->encode(message[i]);
+            encodedMessage += this->encodeLetter(message[i]);
         }
         return encodedMessage;
     }
@@ -42,7 +42,6 @@ public:
 
 int main()
 {
-
     // Set the initial position of the rotors
     int rotorSettings[3]  = {0, 0, 0};
     int rotors[3]  = {1, 0, 0};
@@ -51,6 +50,6 @@ int main()
     std::string message;
     std::cout << "Enter a message to encrypt: ";
     Enigma* enigma = new Enigma(rotors, reflector, rotorSettings);
-    std::cout << enigma->encodeMessage("I");
+    std::cout << enigma->encodeMessage("XMQSHEOBHPUCZNGUQVNYHTFQJUXMQSHEOBHPUCZNGUQVNYHTFQJUXMQSHEOBHPUCZNGUQVNYHTFQJUXMQSHEOBHPUCZNGUQVNYHTFQJUXMQSHEOBHPUCZNGUQVNYHTFQJUXM");
     while(true){};
 }

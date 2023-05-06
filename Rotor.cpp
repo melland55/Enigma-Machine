@@ -27,18 +27,20 @@ Rotor::Rotor(char arr[], int pos, int step, Rotor* r) {
 }
 
 char Rotor::encode(char letter) {
+    int c = wiring[(letter - 65 + position)%26] - 65 - position;
     if(this->next != NULL){
-        return this->next->encode(wiring[(letter - 65 + position)%26]);
+        return this->next->encode((c + (c < 0 ? 26 : 0)) + 65);
     }else{
-        return this->prev->decode(wiring[(letter - 65 + position)%26]);
+        return this->prev->decode((c + (c < 0 ? 26 : 0)) + 65);
     }
 }
 
 char Rotor::decode(char letter){
+    int c = wiringInverse[(letter - 65 + position)%26] - 65 - position;
     if(this->prev != NULL){
-        return this->prev->decode(wiringInverse[(letter - 65 - position)%26]);
+        return this->prev->decode((c + (c < 0 ? 26 : 0)) + 65);
     }else{
-        return wiringInverse[(letter - 65 - position)%26];
+        return ((c + (c < 0 ? 26 : 0)) + 65);
     }
 }
 
