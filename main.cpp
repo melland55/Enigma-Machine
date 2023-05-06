@@ -1,125 +1,56 @@
 #include <iostream>
-#include <vector>
-#include <algorithm>
-#include <String>
-using namespace std;
+#include <string>
+#include "Rotor.h"
 
-class Rotor{
+class Enigma {
 private:
-    std::vector<char> wiring;
-    int position;
-    Rotor* next;
-    int stepper;
+    Rotor* rotors[3];
+    Rotor* reflector;
+    char rotorSelection[3][26] = {
+        {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'},
+        {'E', 'K', 'M', 'F', 'L', 'G', 'D', 'Q', 'V', 'Z', 'N', 'T', 'O', 'W', 'Y', 'H', 'X', 'U', 'S', 'P', 'A', 'I', 'B', 'R', 'C', 'J'},
+        {'B', 'D', 'F', 'H', 'J', 'L', 'C', 'P', 'R', 'T', 'X', 'V', 'Z', 'N', 'Y', 'E', 'I', 'W', 'G', 'A', 'K', 'M', 'U', 'S', 'Q', 'O'}};
+    char steppers[3] = { 3, 3, 3};
+    char reflectorSelection[3][26] = {
+        {'E', 'J', 'M', 'Z', 'A', 'L', 'Y', 'X', 'V', 'B', 'W', 'F', 'C', 'R', 'Q', 'U', 'O', 'N', 'T', 'S', 'P', 'I', 'K', 'H', 'G', 'D'},
+        {'Y', 'R', 'U', 'H', 'Q', 'S', 'L', 'D', 'P', 'X', 'N', 'G', 'O', 'K', 'M', 'I', 'E', 'B', 'F', 'Z', 'C', 'W', 'V', 'J', 'A', 'T'},
+        {'F', 'V', 'P', 'J', 'I', 'A', 'O', 'Y', 'E', 'D', 'R', 'Z', 'X', 'W', 'G', 'C', 'T', 'K', 'U', 'Q', 'S', 'B', 'N', 'M', 'H', 'L'}};
 public:
-    Rotor(std::vector<char> rotor, int pos, int step) {
-        wiring = rotor;
-        position = pos;
-        stepper = step;
-        next = NULL;
-        for(int i = pos; i < pos; i++){
-            rotate();
+    Enigma(int* rot, int ref, int* rotorSettings) {
+        reflector = new Rotor(reflectorSelection[ref], 0, 0);
+        rotors[2] = new Rotor(rotorSelection[rot[2]], rotorSettings[2], steppers[rot[2]], reflector);
+        rotors[1] = new Rotor(rotorSelection[rot[1]], rotorSettings[1], steppers[rot[1]], rotors[2]);
+        rotors[0] = new Rotor(rotorSelection[rot[0]], rotorSettings[0], steppers[rot[0]], rotors[1]);
+        reflector->setPrev(rotors[2]);
+        rotors[2]->setPrev(rotors[1]);
+        rotors[1]->setPrev(rotors[0]);
+    }
+
+    char encode(char letter){
+        rotors[0]->rotate();
+        return rotors[0]->encode(letter);
+    }
+
+    std::string encodeMessage(std::string message){
+        std::string encodedMessage = "";
+        for(int i = 0; i < message.length(); i++){
+            encodedMessage += this->encode(message[i]);
         }
-    }
-
-    Rotor(std::vector<char> rotor, int pos, int step, Rotor* r) {
-        wiring = rotor;
-        position = pos;
-        stepper = step;
-        next = r;
-        for(int i = pos; i < pos; i++){
-            rotate();
-        }
-    }
-
-    char encode(char letter) {
-        return wiring[(letter - 65 + position)%26];
-    }
-
-    char decode(char letter){
-        return find(wiring.begin(), wiring.end(),(char)((letter - 65 + position)%26 + 65)) - wiring.begin() + 65;
-    }
-
-    void rotate() {
-        char lastChar = wiring.back();
-        wiring.pop_back();
-        wiring.insert(wiring.begin(), lastChar);
-        if(stepper == position && next != NULL){
-            next->rotate();
-        }
-        position = (position+1)%26;
+        return encodedMessage;
     }
 };
 
-
-// Function to rotate the rotor
-void rotateRotor(vector<char>& rotor)
-{
-    char lastChar = rotor.back();
-    rotor.pop_back();
-    rotor.insert(rotor.begin(), lastChar);
-}
-
-// Function to encrypt a letter
-char encryptLetter(char letter, vector<vector<char>> rotors)
-{
-    // Pass the letter through each rotor in sequence
-    for (int i = 0; i < rotors.size(); i++) {
-        letter = rotors[(i+1) % rotors.size()][letter - 65];
-    }
-    return letter;
-}
-
-
-
 int main()
 {
-    // Create three rotors with different sets of characters
-    vector<vector<char>> rotors = {
-        {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'},
-        {'E', 'K', 'M', 'F', 'L', 'G', 'D', 'Q', 'V', 'Z', 'N', 'T', 'O', 'W', 'Y', 'H', 'X', 'U', 'S', 'P', 'A', 'I', 'B', 'R', 'C', 'J'},
-        {'B', 'D', 'F', 'H', 'J', 'L', 'C', 'P', 'R', 'T', 'X', 'V', 'Z', 'N', 'Y', 'E', 'I', 'W', 'G', 'A', 'K', 'M', 'U', 'S', 'Q', 'O'},
-        
-    };
-
-    vector<vector<char>> reflectors = {
-        {'E', 'J', 'M', 'Z', 'A', 'L', 'Y', 'X', 'V', 'B', 'W', 'F', 'C', 'R', 'Q', 'U', 'O', 'N', 'T', 'S', 'P', 'I', 'K', 'H', 'G', 'D'},
-        {'Y', 'R', 'U', 'H', 'Q', 'S', 'L', 'D', 'P', 'X', 'N', 'G', 'O', 'K', 'M', 'I', 'E', 'B', 'F', 'Z', 'C', 'W', 'V', 'J', 'A', 'T'},
-        {'F', 'V', 'P', 'J', 'I', 'A', 'O', 'Y', 'E', 'D', 'R', 'Z', 'X', 'W', 'G', 'C', 'T', 'K', 'U', 'Q', 'S', 'B', 'N', 'M', 'H', 'L'}
-    };
 
     // Set the initial position of the rotors
-    vector<int> rotorPositions = {0, 0, 0};
+    int rotorSettings[3]  = {0, 0, 0};
+    int rotors[3]  = {1, 0, 0};
+    int reflector = 0;
 
-    // Input a message to encrypt
-    string message;
-    cout << "Enter a message to encrypt: ";
-    getline(cin, message);
-    Rotor* r = new Rotor(rotors[1], 0, 2);
-    Rotor* r2 = new Rotor(rotors[1], 0, 2, r);
-    Rotor* r3 = new Rotor(rotors[1], 0, 2, r2);\
-    cout << r->encode(r2->encode(r3->encode('T')));
-
-    // Encrypt each letter in the message
-    // for (int i = 0; i < message.length(); i++) {
-    //     // Ignore non-alphabetic characters
-    //     if (!isalpha(message[i])) {
-    //         continue;
-    //     }
-
-    //     // Convert the letter to uppercase
-    //     char letter = toupper(message[i]);
-    //     char newLetter = encryptLetter(letter, rotors);
-    //     cout << newLetter;
-    //     // Rotate the rotors
-    //     for (int j = 0; j < rotors.size(); j++) {
-    //         rotateRotor(rotors[j]);
-    //         rotorPositions[j]++;
-    //         rotorPositions[j] %= 26;
-
-    //         // Shift the rotor positions of the adjacent rotors if needed
-    //         if (j < rotors.size() - 1 && rotorPositions[j] == (rotors[j].size() - 1)) {
-    //             rotateRotor(rotors[j+1]);
-    //         }
-    //     }
-    // }
+    std::string message;
+    std::cout << "Enter a message to encrypt: ";
+    Enigma* enigma = new Enigma(rotors, reflector, rotorSettings);
+    std::cout << enigma->encodeMessage("I");
+    while(true){};
 }
