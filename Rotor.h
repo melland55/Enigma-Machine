@@ -18,4 +18,4 @@ public:
     void setPrev(Rotor* r);
 };
 
-#endif // ROTOR_H
+#endif
